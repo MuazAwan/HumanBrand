@@ -1,0 +1,13 @@
+# Requires-Python: >=3.12
+asyncio-mqtt>=0.16.2
+boto3>=1.40.2
+latexmk>=0.0.2
+litellm>=1.74.15.post1
+markdown>=3.8.2
+nltk>=3.9.1
+openai-agents[litellm]>=0.2.4
+pandas>=2.3.1
+pydantic>=2.11.7
+python-docx>=1.2.0
+reportlab>=4.4.3
+streamlit>=1.47.1
