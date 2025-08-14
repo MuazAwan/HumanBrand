@@ -922,7 +922,7 @@ def call_bedrock_claude(prompt: str, max_tokens: int = 4000, temperature: float 
         
         response = bedrock_client.invoke_model(
             body=body,
-            modelId="eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            modelId="eu.anthropic.claude-sonnet-4-20250514-v1:0",
             accept="application/json",
             contentType="application/json"
         )
@@ -935,7 +935,7 @@ def call_bedrock_claude(prompt: str, max_tokens: int = 4000, temperature: float 
         return f"Error in Claude call: {str(e)}"
 
 # AWS Bedrock client setup
-def create_bedrock_model(model_name: str = "eu.anthropic.claude-3-7-sonnet-20250219-v1:0") -> LitellmModel:
+def create_bedrock_model(model_name: str = "eu.anthropic.claude-sonnet-4-20250514-v1:0") -> LitellmModel:
     """Create a LiteLLM model instance for AWS Bedrock"""
     
     # Clear any existing AWS profile environment variables that might cause conflicts
@@ -1458,21 +1458,25 @@ def main():
     """FIXED: Main Streamlit application with Bedrock Claude compatibility"""
     
     st.set_page_config(
-        page_title="Brand Analysis Agent System",
-        page_icon="🧬",
+        page_title="Humanbrand",
+        page_icon="hbai-logo.png",
         layout="wide",
         initial_sidebar_state="expanded"
     )
     
-    st.title("🧬 Brand Analysis Agent System")
-    st.markdown("### AI-Powered Brand Discovery using Bedrock Claude 3.7 (NON-STRICT JSON SCHEMA FIX)")
+    # Display HumanBrand logo and title
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.image("hbai-logo.png", width=60)
+    with col2:
+        st.title("HumanBrand Analysis Agent System")
+    st.markdown("### AI-Powered Brand Discovery using Bedrock Claude 4")
     
     # Show the fix information
     st.info("""
     🔧 **BEDROCK CLAUDE FIX APPLIED:**
     - Using `AgentOutputSchema(Model, strict_json_schema=False)` for both agents
     - Simplified Pydantic models to avoid complex nested structures
-    - Compatible with LiteLLM + Bedrock Claude limitations
     """)
     
     # Validate environment
@@ -1581,26 +1585,6 @@ def main():
                 st.warning("Please upload at least one corpus file before processing.")
         
         st.markdown("---")
-        st.info("**BEDROCK CLAUDE COMPATIBILITY:**")
-        st.code("""
-# FIXED: Using non-strict JSON schema
-output_type=AgentOutputSchema(
-    ObjectiveDataBedrock, 
-    strict_json_schema=False  # Required for Bedrock Claude
-)
-
-# Required AWS Credentials
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=eu-north-1
-
-# LiteLLM with Bedrock
-pip install litellm
-
-# EU Claude 3.7 Sonnet Profile
-eu.anthropic.claude-3-7-sonnet-20250219-v1:0
-        """)
-    
     # Main content area
     if st.session_state.files_processed and st.session_state.batch_data:
         # Professional debug info for step-by-step inspection
@@ -1916,7 +1900,7 @@ eu.anthropic.claude-3-7-sonnet-20250219-v1:0
                     st.subheader("🔧 Technical Details")
                     st.write("**JSON Schema Mode:** Non-Strict (Bedrock Claude Compatible)")
                     st.write("**Model Provider:** LiteLLM + AWS Bedrock")
-                    st.write("**Claude Version:** 3.7 Sonnet EU")
+                    st.write("**Claude Version:** 4 Sonnet EU")
             
             with tab5:
                 st.markdown("## Download Options (Bedrock Claude Compatible)")
@@ -1947,109 +1931,6 @@ eu.anthropic.claude-3-7-sonnet-20250219-v1:0
         # Instructions when no files are processed
         st.info("👆 Please upload and process your files using the sidebar to begin analysis.")
         
-        with st.expander("📋 How to use this BEDROCK CLAUDE FIXED system"):
-            st.markdown("""
-            ### What's Fixed in This Version:
-            
-            ✅ **Non-Strict JSON Schema**: Using `AgentOutputSchema(Model, strict_json_schema=False)`
-            ✅ **Bedrock Claude Compatibility**: Simplified Pydantic models for LiteLLM + Bedrock
-            ✅ **Proper Error Handling**: Better fallback mechanisms for Bedrock Claude
-            ✅ **LiteLLM Integration**: Optimized for AWS Bedrock EU inference profiles
-            ✅ **Type Safety**: Maintained structured outputs without strict schema validation
-            
-            ### Key Technical Changes:
-            
-            **Before (Strict Mode - Caused Error):**
-            ```python
-            extraction_agent = Agent(
-                name="The Auditor",
-                output_type=ObjectiveDataBedrock  # Strict mode by default
-            )
-            ```
-            
-            **After (Non-Strict Mode - Works with Bedrock Claude):**
-            ```python
-            extraction_agent = Agent(
-                name="The Auditor",
-                output_type=AgentOutputSchema(
-                    ObjectiveDataBedrock, 
-                    strict_json_schema=False  # FIXED for Bedrock Claude
-                )
-            )
-            ```
-            
-            ### Why This Fix Works:
-            
-            1. **LiteLLM + Bedrock Claude Limitation**: Bedrock Claude through LiteLLM doesn't support OpenAI's strict JSON schema validation
-            2. **Non-Strict Schema Mode**: Allows the model to generate JSON that approximates the schema without strict validation
-            3. **Simplified Pydantic Models**: Removed complex nested structures that could cause schema validation issues
-            4. **Better Error Recovery**: Improved fallback mechanisms when JSON parsing fails
-            
-            ### Step-by-Step Guide:
-            
-            1. **Upload Files**: Use the sidebar to upload your scraped corpus files (.md, .txt) and sitemap file (.docx, .txt)
-            2. **Process Files**: Click "Process Uploaded Files" to combine and prepare your content
-            3. **Run Analysis**: Click "Start Brand Analysis (BEDROCK CLAUDE FIX)" to execute the two-agent pipeline
-            4. **Review Results**: Examine the generated brand report and structured data
-            5. **Download**: Export your results in Markdown, JSON, or PDF format
-            
-            ### System Architecture:
-            
-            - **The Auditor**: Extraction agent with non-strict `ObjectiveDataBedrock` output
-            - **The Archaeologist**: Synthesis agent with non-strict `SynthesisReport` output
-            - **AWS Bedrock EU**: Claude 3.7 Sonnet through EU inference profile
-            - **LiteLLM Integration**: Handles Bedrock API calls with proper authentication
-            - **OpenAI Agents SDK**: Framework with non-strict JSON schema support
-            """)
-        
-        # Show system status
-        with st.expander("🔧 System Status (BEDROCK CLAUDE FIXED)"):
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown("**Environment Check:**")
-                aws_key_id = os.getenv('AWS_ACCESS_KEY_ID', '')
-                aws_secret = os.getenv('AWS_SECRET_ACCESS_KEY', '')
-                aws_region = os.getenv('AWS_REGION', 'us-east-1')
-                
-                # Validate AWS Access Key ID format
-                if aws_key_id:
-                    if aws_key_id.startswith('AKIA') or aws_key_id.startswith('ASIA'):
-                        key_status = f"✅ ({aws_key_id[:4]}***)"
-                    else:
-                        key_status = "❌ Invalid format"
-                else:
-                    key_status = "❌ Missing"
-                
-                aws_secret_status = "✅" if aws_secret else "❌"
-                
-                # Check for conflicting profile variables
-                aws_profile = os.getenv('AWS_PROFILE')
-                aws_default_profile = os.getenv('AWS_DEFAULT_PROFILE')
-                
-                profile_status = "❌" if (aws_profile or aws_default_profile) else "✅"
-                profile_info = f" (conflicts: AWS_PROFILE={aws_profile}, AWS_DEFAULT_PROFILE={aws_default_profile})" if (aws_profile or aws_default_profile) else ""
-                
-                st.markdown(f"""
-                - AWS Access Key: {key_status}
-                - AWS Secret Key: {aws_secret_status}
-                - AWS Region: {aws_region}
-                - No Profile Conflicts: {profile_status}{profile_info}
-                - LiteLLM: ✅ Ready
-                """)
-            
-            with col2:
-                st.markdown("**Agent Status (BEDROCK CLAUDE FIXED):**")
-                st.markdown(f"""
-                - Extraction Agent: ✅ Ready (Non-Strict JSON Schema)
-                - Synthesis Agent: ✅ Ready (Non-Strict JSON Schema)
-                - Document Processor: ✅ Ready
-                - PDF Generator: ✅ Ready
-                - Pydantic Models: ✅ Simplified for Bedrock
-                - Bedrock Claude: ✅ Compatible
-                - JSON Schema Mode: ✅ Non-Strict (strict_json_schema=False)
-                """)
-
 # Additional utility functions remain the same...
 def check_bedrock_connection() -> bool:
     """Check if Bedrock connection is working"""
@@ -2188,12 +2069,17 @@ def enhanced_main():
     
     st.set_page_config(
         page_title="Enhanced Brand Analysis System",
-        page_icon="🧬",
+        page_icon="hbai-logo.png",
         layout="wide",
         initial_sidebar_state="expanded"
     )
     
-    st.title("🧬 Enhanced Brand Analysis System")
+    # Display HumanBrand logo and title
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.image("hbai-logo.png", width=60)
+    with col2:
+        st.title("Enhanced Brand Analysis System")
     st.markdown("### AI-Powered Brand Discovery with **Intelligent Batch Processing**")
     
     # Show enhanced features
